@@ -10,8 +10,8 @@ st.write("Voer een Nederlandse tekst en een vraag in. Ontvang direct het antwoor
 # Model laden
 @st.cache_resource
 def load_model():
-    tokenizer = AutoTokenizer.from_pretrained("GroNLP/bert-base-dutch-cased")  # ✅ andere tokenizer
-    model = AutoModelForQuestionAnswering.from_pretrained("wietsedv/bert-base-dutch-cased-finetuned-squad")
+    tokenizer = AutoTokenizer.from_pretrained("pszemraj/bert-base-dutch-squad2qa")  # ✅ werkt wél
+    model = AutoModelForQuestionAnswering.from_pretrained("pszemraj/bert-base-dutch-squad2qa")
     qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer)
     return qa_pipeline
 
