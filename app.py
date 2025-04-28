@@ -1,43 +1,32 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 
-# Pagina instellingen
-st.set_page_config(page_title="🧠 Slimme VraagBeantwoorder (NL)", page_icon="❓", layout="centered")
+st.set_page_config(page_title="🧠 Slimme VraagBeantwoorder (ENG)", page_icon="❓", layout="centered")
 
-st.title("🧠 Slimme VraagBeantwoorder (Nederlands)")
-st.write("Voer een Nederlandse tekst en een vraag in. Ontvang direct het antwoord! (Maximaal ongeveer **300 woorden** tekst).")
+st.title("🧠 Slimme VraagBeantwoorder (Engels)")
+st.write("Voer een Engelse tekst en vraag in. Ontvang direct het antwoord!")
 
-# Model laden
 @st.cache_resource
 def load_model():
-    tokenizer = AutoTokenizer.from_pretrained("pszemraj/bert-base-dutch-squad2qa")  # ✅ werkt wél
-    model = AutoModelForQuestionAnswering.from_pretrained("pszemraj/bert-base-dutch-squad2qa")
+    tokenizer = AutoTokenizer.from_pretrained("deepset/roberta-base-squad2")
+    model = AutoModelForQuestionAnswering.from_pretrained("deepset/roberta-base-squad2")
     qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer)
     return qa_pipeline
 
 qa_pipeline = load_model()
 
-# Tekst en vraag invoer
-context = st.text_area("📄 Plak hier je Nederlandse tekst (context):", height=250)
-question = st.text_input("❓ Stel je vraag over de tekst:")
+context = st.text_area("📄 Paste your English context here:", height=250)
+question = st.text_input("❓ Ask a question:")
 
-# Woordenteller context
-word_count = len(context.split())
-st.write(f"✏️ Aantal woorden in tekst: **{word_count}** (advies: max 300)")
-
-# Submit button
-if st.button("🔍 Zoek antwoord"):
+if st.button("🔍 Find Answer"):
     if context.strip() and question.strip():
-        if word_count > 300:
-            st.warning(f"⚠️ Je tekst bevat {word_count} woorden. Probeer onder de 300 woorden te blijven voor de beste resultaten!")
-
-        with st.spinner("🧠 Antwoord wordt gezocht..."):
+        with st.spinner("🧠 Searching for answer..."):
             answer = qa_pipeline({
                 'context': context,
                 'question': question
             })
 
-        st.success("✅ Antwoord:")
+        st.success("✅ Answer:")
         st.write(answer['answer'])
     else:
-        st.error("⚠️ Vul zowel een tekst als een vraag in!")
+        st.error("⚠️ Please provide both context and question.")
